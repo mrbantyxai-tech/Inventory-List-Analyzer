@@ -1,73 +1,94 @@
-print()
 print("Welcome to Banty's Inventory List Analyzer!")
 print()
 
-items = []              
-quantity_list = []       
-category_set = set()     
-item_quantity_dict = {} 
+items = []
+quantity_list = []
+category_set = set()
+item_quantity_dict = {}
 
 while True:
     name = input("Enter item name: ").strip()
     category = input("Enter category: ").strip().lower()
-    quantity = int(input("Enter quantity: "))
-           
+
+    qty_input = input("Enter quantity: ")
+    if qty_input.isdigit():
+        quantity = int(qty_input)
+    else:
+        print("Invalid quantity! Setting quantity = 0")
+        quantity = 0
+
     items.append((name, category, quantity))
     quantity_list.append(quantity)
     item_quantity_dict[name] = quantity
     category_set.add(category)
-    print()
+
     more = input("Do you want to add more items? (y/n): ").strip().lower()
     print()
     if more != 'y':
         break
+
 print("============ INVENTORY SUMMARY ============")
 print()
+
 total_items = len(items)
-print(f"Total Different Items: {total_items}")
-print(f"Explanation: You entered {total_items} different items: "
-      + ", ".join([i[0] for i in items]) + ".")
+print("Total Different Items:", total_items)
+print("Explanation: You entered " + str(total_items) +
+      " different items: " + ", ".join(i[0] for i in items) + ".")
 print()
 
 total_quantity = sum(quantity_list)
-print(f"Total Quantity in Stock: {total_quantity}")
-print(f"Explanation: Sum of all quantities: "
-      f"{' + '.join(str(q) for q in quantity_list)} = {total_quantity}")
+print("Total Quantity in Stock:", total_quantity)
+print("Explanation: Sum of all quantities: " +
+      " + ".join(str(q) for q in quantity_list) +
+      " = " + str(total_quantity))
 print()
 
 average = total_quantity / total_items
-print(f"Average Quantity per Item: {average}")
-print(f"Explanation: Average = {total_quantity} total / {total_items} items")
+print("Average Quantity per Item:", average)
+print("Explanation: Average = " + str(total_quantity) +
+      " total / " + str(total_items) + " items")
 print()
 
-most_item = max(items, key=lambda x: x[2])
-least_item = min(items, key=lambda x: x[2])
+max_item = items[0]
+for item in items:
+    if item[2] > max_item[2]:
+        max_item = item
 
-print(f"Most Stocked Item: {most_item[0]} ({most_item[2]} units)")
-print(f"Explanation: {most_item[0]} Has The Highest Quantity Among All Items.")
+min_item = items[0]
+for item in items:
+    if item[2] < min_item[2]:
+        min_item = item
+
+print("Most Stocked Item:", max_item[0], f"({max_item[2]} units)")
+print(f"Explanation: {max_item[0]} Has The Highest Quantity Among All Items.")
 print()
-print(f"Least Stocked Item: {least_item[0]} ({least_item[2]} units)")
-print(f"Explanation: {least_item[0]} Has The Lowest Quantity.")
+print("Least Stocked Item:", min_item[0], f"({min_item[2]} units)")
+print(f"Explanation: {min_item[0]} Has The Lowest Quantity.")
 print()
-
-
 print("------------------------------------------")
 print()
-print(f"Unique Categories in Inventory: {category_set}")
+print("Unique Categories in Inventory:", category_set)
 print("Explanation: Categories are taken from user input and converted to lowercase.")
-print("No duplicates are shown here.")
 print()
 
-sorted_by_qty = sorted(items, key=lambda x: x[2], reverse=True)
+sorted_items = items[:]
+n = len(sorted_items)
+for i in range(n):
+    for j in range(0, n - i - 1):
+        if sorted_items[j][2] < sorted_items[j + 1][2]:
+            sorted_items[j], sorted_items[j + 1] = sorted_items[j + 1], sorted_items[j]
 
 print("------------------------------------------")
 print("📦 Items Sorted by Quantity (High to Low):")
 print()
 
-for i, item in enumerate(sorted_by_qty, 1):
-    print(f"{i}. {item[0]} - {item[2]} units")
+counter = 1
+for item in sorted_items:
+    print(str(counter) + ". " + item[0] + " - " + str(item[2]) + " units")
+    counter += 1
+
 print()
-print("Explanation: Items are sorted using quantity from highest to lowest.")
+print("Explanation: Items are sorted from highest to lowest quantity.")
 print()
 
 sorted_categories = sorted(category_set)
@@ -76,9 +97,13 @@ print("------------------------------------------")
 print("📂 Categories in Alphabetical Order:")
 print()
 
-for i, c in enumerate(sorted_categories, 1):
-    print(f"{i}. {c}")
+counter = 1
+for c in sorted_categories:
+    print(str(counter) + ". " + c)
+    counter += 1
+
 print()
-print("Explanation: The set of unique categories was sorted alphabetically for display.")
+print("Explanation: Categories are shown alphabetically.")
 print()
+
 print("=========== END OF REPORT ===========")
